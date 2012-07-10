@@ -1,3 +1,15 @@
+<?php
+    session_start();
+
+    if (isset($_POST["user"]) && isset($_POST["pass"])) {
+        // lets do some fancy authenication here.
+    
+        $_SESSION["logged_in"] = True;
+    }
+
+    // might be nice to check if they timed out.
+
+?>
 <!doctype html>
 <html>
     <head>
@@ -13,12 +25,16 @@
         <link rel="stylesheet" type="text/css" href="css/jqtransform.css" />
     </head>
     <body>
+<?php
+    if (isset($_SESSION["logged_in"]) && $_SESSION["logged_in"] == True):
+?>
         <div id="loader"></div>
-
         <div id="page">
             This is the main page...
         </div>
-
+<?php
+    else:
+?>
         <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="POST">
             <div class="rowElem">
                 <label >Username:</label>
@@ -32,6 +48,8 @@
                 <input type="submit" value="Login!" />
             </div>
         </form>
-
+<?php
+    endif;
+?>
     </body>
 </html>
