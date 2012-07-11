@@ -8,7 +8,19 @@ $(document).ready(function() {
     }, 1000);
 
 
-    $("form").jqTransform();
+    $("#uploadForm").ajaxForm({
+        
+        dataType: "json",
+        /*
+        beforeSubmit: function(a,f,o) {
+                          o.dataType = $('#uploadResponseType')[0].value;
+                          $('#uploadOutput').html('Submitting...');
+                      },
+        */
+        success: function(data) {
+                    conole.log(data);
+                 }
+    }); 
 
 
 });

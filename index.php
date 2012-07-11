@@ -19,10 +19,9 @@
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
         <script type="text/javascript" src="js/PxLoader.js"></script>
         <script type="text/javascript" src="js/PxLoaderImage.js"></script>
-        <script type="text/javascript" src="js/jquery.jqtransform.js"></script>
+        <script type="text/javascript" src="js/jquery.form.js"></script>
         <script type="text/javascript" src="js/script.js"></script>
         <link rel="stylesheet" type="text/css" href="css/style.css" />
-        <link rel="stylesheet" type="text/css" href="css/jqtransform.css" />
     </head>
     <body>
 <?php
@@ -35,18 +34,13 @@
 <?php
     else:
 ?>
-        <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="POST">
-            <div class="rowElem">
-                <label >Username:</label>
+
+        <form id="loginForm" action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
+            <label>Username:</label>
                 <input type="text" value="username" name="user" id="user" />
-            </div>
-            <div class="rowElem">
-                <label>Password:</label>
+            <label>Password:</label>
                 <input type="password" value="12345678" name="pass" id="pass" />
-            </div>
-            <div class="rowElem">
-                <input type="submit" value="Login!" />
-            </div>
+            <input type="submit" value="Login!" />
         </form>
 <?php
     endif;
