@@ -1,8 +1,10 @@
 <?php                 
 
-    $xhr = $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'; 
-    if (!$xhr)  
-        echo '<textarea>'; 
+    if (isset($_SERVER["HTTP_X_REQUESTED_WITH"])) {
+        $xhr = $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'; 
+        if (!$xhr)  
+            echo '<textarea>'; 
+    }
 
     // main content of response here 
 
@@ -10,29 +12,36 @@
 
     $UPLOAD_DIR = "uploads/";
 
-    if (($_FILES["file"]["type"] == "image/png") && ($_FILES["file"]["size"] < $MAX_SIZE)) {
-        if ($_FILES["file"]["error"] > 0) {        
-        
-            echo "Return Code: " . $_FILES["file"]["error"] . "<br />";
-        } else {
+    if (isset($_FILES["file"])) {
 
-            echo "Upload: " . $_FILES["file"]["name"] . "<br />";
-            echo "Type: " . $_FILES["file"]["type"] . "<br />";
-            echo "Size: " . ($_FILES["file"]["size"] / 1024) . " Kb<br />";
-            echo "Temp file: " . $_FILES["file"]["tmp_name"] . "<br />";
-
-            if (file_exists($UPLOAD_DIR . $_FILES["file"]["name"])) {
-                echo $_FILES["file"]["name"] . " already exists. ";
+        if (($_FILES["file"]["type"] == "image/png") && ($_FILES["file"]["size"] < $MAX_SIZE)) {
+            if ($_FILES["file"]["error"] > 0) {        
+            
+                echo json_encode(array("error" => $_FILES["file"]["error"]));
             } else {
-                move_uploaded_file($_FILES["file"]["tmp_name"], $UPLOAD_DIR . $_FILES["file"]["name"]);
-                echo "Stored in: " . $UPLOAD_DIR . $_FILES["file"]["name"];
+
+                //echo "Upload: " . $_FILES["file"]["name"] . "<br />";
+                //echo "Type: " . $_FILES["file"]["type"] . "<br />";
+                //echo "Size: " . ($_FILES["file"]["size"] / 1024) . " Kb<br />";
+                //echo "Temp file: " . $_FILES["file"]["tmp_name"] . "<br />";
+
+                if (file_exists($UPLOAD_DIR . $_FILES["file"]["name"])) {
+                    echo json_encode(array("error" => $_FILES["file"]["name"] . " already exists."));
+                } else {
+                    move_uploaded_file($_FILES["file"]["tmp_name"], $UPLOAD_DIR . $_FILES["file"]["name"]);
+                    echo json_encode(array("mappath" => $UPLOAD_DIR . $_FILES["file"]["name"]));
+                }
             }
+        } else {
+            echo json_encode(array("error" => "Invalid file"));
         }
     } else {
-        echo "Invalid file";
+        echo json_encode(array("error" => "No file submitted"));
     }
 
-    if (!$xhr)   
-        echo '</textarea>'; 
+    if (isset($_SERVER["HTTP_X_REQUESTED_WITH"])) {
+        if (!$xhr)   
+            echo '</textarea>'; 
+    }
 
 ?> 
