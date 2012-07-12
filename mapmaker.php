@@ -243,7 +243,7 @@
 
         <div id="map_area">
 
-            <canvas id="map_canvas" style="border: 1px dashed black;" width="640px" height="480px">
+            <canvas id="map_canvas" style="border: 1px dashed black;" width="960px" height="640px">
                 Yo man! yo browser's like prehistoric bro
             </canvas>
 

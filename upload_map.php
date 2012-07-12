@@ -8,7 +8,7 @@
 
     // main content of response here 
 
-    $MAX_SIZE = 40000;
+    $MAX_SIZE = 150000;
 
     $UPLOAD_DIR = "uploads/";
 
@@ -33,7 +33,8 @@
                 }
             }
         } else {
-            echo json_encode(array("error" => "Invalid file"));
+            $size = (string)($_FILES["file"]["size"] / 1024) . "Kb";
+            echo json_encode(array("error" => "Invalid file (wrong format, or too large @ $size)"));
         }
     } else {
         echo json_encode(array("error" => "No file submitted"));

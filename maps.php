@@ -39,9 +39,13 @@
             "eventList" => array(),
         );
 
-        $cursor = $collection->insert($obj);
+        $collection->insert($obj);
 
-        echo json_encode(array("success" => True, "insert" => $obj));
+        $map_name = $obj["mapID"];
+        $cursor = $collection->find(array("mapID" => $map_name));
+        echo json_encode(iterator_to_array($cursor));
+
+        //echo json_encode(array("success" => True, "insert" => $obj));
     }
 
 
