@@ -36,21 +36,31 @@
                                 },
                                 function(data) {
                                     // success
+                                    
                                     var res = $.parseJSON(data);
 
-                                    if (res.length == 0) {
+                                    var count = 0;
+                                    for (x in res) {
+                                        count = count + 1;
+                                    }
+
+                                    if (count == 0) {
 
                                         $("#upload_msg").css("color", "#ff0000");
                                         $("#upload_msg").text("That map ID doesn't exist, you would to upload it?");
                                         console.log($("#upload_msg"));
                                         $("#uploader").fadeIn();
 
-                                    } else if (res.length == 1) {
+                                    } else if (count == 1) {
 
                                         // yey, its there
                                         $("#uploader").fadeOut();
                                         $("#map_area").fadeIn();
                                         $("#right_bar").animate({"width": "30%"});
+                                        populate_sidebar("#right_bar", res);
+                                    
+                                    } else {
+                                        console.log("Error: Querying map returned more than 1 map with same mapID!");
                                     }
                                 }
                     );
@@ -77,12 +87,24 @@
                                                 "rand": Math.random().toString()
                                             },
                                             function(data) {
-                                                    console.log(data);
+                                                
+                                                // successfully uploaded and created a new map
+                                                $("#uploader").fadeOut();
+                                                $("#map_area").fadeIn();
+                                                $("#right_bar").animate({"width": "30%"});
+                                                var res = $.parseJSON(data);
+                                                populate_sidebar("#right_bar", res);
                                             }
                                     ); 
 
                                 }
                             }
+                });
+
+
+                $("#saveButton").click(function() {
+
+                    console.log(" SAVE TIEM! ");
                 });
 
             });
@@ -91,20 +113,90 @@
 
                 //var canvas = document.getElementById(canvas_tag);
                 var context = canvas.getContext("2d");
+                
+                //var loader = new PxLoader(), 
+                //    img = loader.addImage(images_path/headerbg.jpg'), 
+
                 var img = new Image();
                 img.src = image_path;
                 img.onload = function() {
                     context.drawImage(img, 0, 0);
+                    drawGrid(canvas, context);
                 };
             }
 
             function populate_sidebar(newparent, obj) {
-                // iterate through $obj
-                // making new (relevent to type) children for $parent
-                // assigning known values to newly created children
-                // and add a save button
-             
-                // img_to_canvas($("#map_canvas")[0], path);
+                var path = "";
+                
+                // should be safe to presume obj has a single element, where it's child is what we want
+                for (x in obj) {
+                    for (y in obj[x]) {
+
+                        if (y.toString() == "_id") {
+                            continue;
+                        }
+
+                        if (y.toString() == "imagePath") {
+                            path = obj[x][y].toString();
+                        }
+
+                        if (obj[x][y] != "") {
+                            console.log(y.toString() + " - " + obj[x][y].toString());
+
+                            newListElement(newparent, y.toString(), obj[x][y].toString());
+
+                        } else {
+                            console.log(y.toString() + " - []");
+                        
+                            newListElement(newparent, y.toString(), obj[x][y].toString());
+                        }
+                    }
+                    // so we only get one element
+                    break;
+                }
+
+                img_to_canvas($("#map_canvas")[0], path);
+            }
+
+            function newListElement(newparent, label, value) {
+                $(newparent).prepend(
+                    $("<div/>", {
+                        id: "",
+                    }).css({
+                        "margin" : "25px",
+                    }).append(
+
+                        $("<label/>", {
+                            text: label.toString(),
+                        }).css({
+                            "padding" : "0px 20px",
+                        })
+
+                    ).append( 
+                        $("<input/>", {
+                            type: "text",
+                                value: value.toString(),
+                        })
+                    )
+                );
+            }
+
+            function drawGrid(canvas, context) {
+
+                console.log(canvas);
+
+                for (var x = 0.5; x < canvas.width; x += 16) {
+                    context.moveTo(x, 0);
+                    context.lineTo(x, canvas.height);
+                }
+
+                for (var y = 0.5; y < canvas.height; y += 16) {
+                    context.moveTo(0, y);
+                    context.lineTo(canvas.width, y);
+                }
+
+                context.strokeStyle = "#aaa";
+                context.stroke();
             }
 
         </script>
@@ -152,14 +244,16 @@
         <div id="map_area">
 
             <canvas id="map_canvas" style="border: 1px dashed black;" width="640px" height="480px">
-                Yo man! yo browser's like prehistoric brah
+                Yo man! yo browser's like prehistoric bro
             </canvas>
 
         </div>
 
         <div id="right_bar" style="position: fixed; right: 0; top: 0; height: 100%; width: 0%; background-color: #aaaaaa;">
 
-            
+            <div id="saveButtonDiv" >
+                <input id="saveButton" type="button" value="save" style="margin: 50px; height: 25px; width: 75px;" />
+            </div> 
 
         </div>
 

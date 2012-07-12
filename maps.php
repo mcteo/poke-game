@@ -41,7 +41,7 @@
 
         $cursor = $collection->insert($obj);
 
-        echo json_encode("insert", $obj);
+        echo json_encode(array("success" => True, "insert" => $obj));
     }
 
 
