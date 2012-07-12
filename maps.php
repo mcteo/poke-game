@@ -26,17 +26,27 @@
         //foreach ($cursor as $obj) {
         //    echo $obj["title"] . "<br />\n";
         //}
-    } elseif (isset($_POST["map_path"])) {
+    } elseif (isset($_POST["mapID"])) {
 
         $collection = $db->maps;
-        $map_path = (string)$_POST["map_path"];
-        $map_name = (string)$_POST["map_name"];
+        $map_name = (string)$_POST["mapID"];
+        $map_path = (string)$_POST["mapPath"];
+        if (isset($_POST["noWalk"])) {
+            $map_nowalk = json_decode((string)$_POST["noWalk"]);
+        } else {
+            $map_nowalk = array();
+        }
+        if (isset($_POST["events"])) {
+            $map_events = json_decode((string)$_POST["events"]);
+        } else {
+            $map_events = array();
+        }
 
         $obj = array(
             "mapID" => $map_name,
             "imagePath" => $map_path,
-            "noWalkArea" => array(),
-            "eventList" => array(),
+            "noWalkArea" => $map_nowalk,
+            "eventList" => $map_events,
         );
 
         $collection->insert($obj);

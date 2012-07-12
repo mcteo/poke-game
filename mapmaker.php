@@ -82,8 +82,8 @@
 
                                     $.post("maps.php",
                                             {
-                                                "map_name": $("#mapSwitchName").val(),
-                                                "map_path": path,
+                                                "mapID": $("#mapSwitchName").val(),
+                                                "mapPath": path,
                                                 "rand": Math.random().toString()
                                             },
                                             function(data) {
@@ -101,11 +101,56 @@
                             }
                 });
 
-
                 $("#saveButton").click(function() {
-
-                    console.log(" SAVE TIEM! ");
+                    $.post("maps.php",
+                        {
+                            "mapID": $("#mapID").val(),
+                            "mapPath": $("#imagePath").val(),
+                            "noWalk": $("#noWalkArea").val(),
+                            "events": $("#eventList").val(),
+                            "rand": Math.random().toString()
+                        },
+                        function(data) {
+                            var res = $.parseJSON(data);
+                            console.log("Hopefully, saved!");
+                        }
+                    ); 
+                
                 });
+
+                $("#map_canvas").click(function(e) {
+
+                    var ctx = $("#map_canvas")[0].getContext("2d");
+                    
+                    // (x, y) is the tile clicked
+                    var x = Math.floor( (e.pageX - $("#map_canvas").offset()["left"]) / 16);
+                    var y = Math.floor( (e.pageY - $("#map_canvas").offset()["top"]) / 16);
+    
+                    var curr = $.parseJSON($("noWalkArea").val());
+
+                    //ctx.fillStyle = "rgb(255,255,255)";
+                    //ctx.fillRect(x*16, y*16, 16, 16);
+
+                    // change this to another layer, so you can wipe it easily
+
+                    ctx.beginPath();
+                    ctx.moveTo((x * 16) + 0.5, (y * 16) + 0.5);
+                    ctx.lineTo((x * 16) + 0.5, (y * 16) + 16.5);
+                    ctx.lineTo((x * 16) + 16.5, (y * 16) + 16.5);
+                    ctx.lineTo((x * 16) + 16.5, (y * 16) + 0.5);
+                    ctx.lineTo((x * 16) + 0.5, (y * 16) + 0.5);
+                    ctx.closePath();
+
+                    ctx.lineWidth = "1";
+                    ctx.strokeStyle = "#FF0000";
+                    ctx.stroke();
+                    //ctx.strokeStyle = "#aaa";
+
+                    // TODO: fill this rectangle with some translucent colour, on a separate layer
+                    //
+
+                });
+
 
             });
 
@@ -141,13 +186,9 @@
                         }
 
                         if (obj[x][y] != "") {
-                            console.log(y.toString() + " - " + obj[x][y].toString());
-
                             newListElement(newparent, y.toString(), obj[x][y].toString());
 
                         } else {
-                            console.log(y.toString() + " - []");
-                        
                             newListElement(newparent, y.toString(), obj[x][y].toString());
                         }
                     }
@@ -161,7 +202,7 @@
             function newListElement(newparent, label, value) {
                 $(newparent).prepend(
                     $("<div/>", {
-                        id: "",
+                        id: label.toString(),
                     }).css({
                         "margin" : "25px",
                     }).append(
@@ -182,8 +223,6 @@
             }
 
             function drawGrid(canvas, context) {
-
-                console.log(canvas);
 
                 for (var x = 0.5; x < canvas.width; x += 16) {
                     context.moveTo(x, 0);
@@ -217,14 +256,6 @@
 
 <?php
 
-    // heres a little idea about workflow
-    // the page opens here, if $_SESSION["logged_in"]
-    // submit mapID ayncly
-    // if mapID doesnt exist in mongo,
-    //     open the form upload part
-    //     if valid:
-    //         make new entry in mongo for mapID
-    // so now we have a valid image, and valid mongodb entry
     // load all existing content for mapID
     // now allow user to edit it to their hearts content
     // save changes back to mongo
